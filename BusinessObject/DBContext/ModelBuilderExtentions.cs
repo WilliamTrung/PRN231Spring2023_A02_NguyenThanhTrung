@@ -6,7 +6,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObject.Context
+namespace BusinessObject.DBContext
 {
     public static class ModelBuilderExtentions
     {
@@ -53,7 +53,7 @@ namespace BusinessObject.Context
                     last_name = "Nam",
                     role_id = 2,
                     pub_id = 1,
-                    hire_date = DateTime.Parse("12112001")
+                    hire_date = DateTime.Parse("12-11-2001")
                 },
 
                 new User
@@ -66,7 +66,7 @@ namespace BusinessObject.Context
                     last_name = "Huong",
                     role_id = 2,
                     pub_id = 2,
-                    hire_date = DateTime.Parse("09102001")
+                    hire_date = DateTime.Parse("09-10-2001")
                 }
                 ); ;
 

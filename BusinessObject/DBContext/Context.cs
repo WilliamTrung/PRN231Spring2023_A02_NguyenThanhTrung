@@ -7,7 +7,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessObject.Context
+namespace BusinessObject.DBContext
 {
     public class Context : DbContext
     {
@@ -29,7 +29,8 @@ namespace BusinessObject.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("");
+            if(!optionsBuilder.IsConfigured)
+                optionsBuilder.UseSqlServer("server=WILLIAMTRUNG\\MYSQL;database=eStoreDb;uid=sa;pwd=123;trusted_connection=true");           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

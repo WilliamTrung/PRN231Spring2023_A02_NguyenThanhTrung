@@ -1,0 +1,78 @@
+﻿@page
+@model eBookStore.Pages.Administrator.Books.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].advanced)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].royalty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].ytd_date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].note)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book[0].published_date)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Book) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.advanced)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.royalty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ytd_date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.note)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.published_date)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.book_id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.book_id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.book_id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,70 @@
+﻿@page
+@model eBookStore.Pages.Administrator.Authors.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Author</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author.last_name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.last_name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author.first_name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.first_name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author.phone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.phone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author.address)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.address)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author.city)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.city)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author.state)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.state)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author.zip)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.zip)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author.email_address)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.email_address)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Author.author_id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

@@ -1,0 +1,54 @@
+﻿@page
+@model eBookStore.Pages.Administrator.Publishers.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Publisher[0].publisher_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Publisher[0].city)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Publisher[0].state)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Publisher[0].country)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Publisher) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.publisher_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.city)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.state)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.country)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.pub_id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.pub_id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.pub_id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
