@@ -1,10 +1,18 @@
 using BusinessObject.DBContext;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services
+    .AddHttpClient("BaseClient", client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration.GetSection("ApiURI").Value);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    });
+builder.Services.AddSession();
 builder.Services.AddDbContext<Context>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 
