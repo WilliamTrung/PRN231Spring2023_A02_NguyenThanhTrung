@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.SqlTypes;
 
-namespace BusinessObject
+namespace ClientRepository.Models
 {
     public class User
     {
