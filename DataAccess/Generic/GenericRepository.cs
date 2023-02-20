@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository.Generic
+namespace DataAccess.Generic
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {

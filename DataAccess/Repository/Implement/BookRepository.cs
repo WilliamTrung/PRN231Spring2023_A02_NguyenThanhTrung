@@ -1,17 +1,18 @@
 ﻿using BusinessObject;
 using BusinessObject.DBContext;
-using Repository.Generic;
+using DataAccess.Generic;
+using DataAccess.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository.Repository.Implement
+namespace DataAccess.Repository.Implement
 {
     public class BookRepository : GenericRepository<Book>, IBookRepository
     {
-        public BookRepository(Context context) : base(context)
+        public BookRepository(Context context, IUnitOfWork unitOfWork) : base(context)
         {
         }
     }

@@ -11,11 +11,8 @@ namespace ClientRepository.Models
 
     public class BookAuthor
     {
-        [ForeignKey("Author")]
         public int author_id { get; set; }
-        public Author? Author { get; set; }
-
-        [ForeignKey("Book")]
+        public Author? Author { get; set; } 
         public int book_id { get; set; }
         public Book? Book { get; set; }
 

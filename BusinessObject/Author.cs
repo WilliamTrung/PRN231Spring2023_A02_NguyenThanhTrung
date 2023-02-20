@@ -29,6 +29,6 @@ namespace BusinessObject
 
         public string email_address { get; set; } = null!;
 
-        public BookAuthor? BookAuthor { get; set; }
+        public BookAuthor BookAuthor { get; set;} = null!;
     }
 }

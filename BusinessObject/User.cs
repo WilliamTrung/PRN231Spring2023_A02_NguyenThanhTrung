@@ -10,12 +10,10 @@ namespace BusinessObject
         public int user_id { get; set; }
 
         [Required]
-        [DataType(DataType.EmailAddress)]
         public string? email_address { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
-        [MinLength(7)]
+        [MinLength(1)]
         public string? password { get; set; }
 
         public string? source { get; set; }

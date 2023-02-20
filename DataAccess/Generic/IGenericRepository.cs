@@ -5,13 +5,13 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository.Generic
+namespace DataAccess.Generic
 {
     public interface IGenericRepository<TEntity>  where TEntity : class
     {
-        Task Add(TEntity entity);
-        Task Update(TEntity entity);
-        Task Delete(TEntity entity);
-        Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>>? expression = null, params string[] includeProperties);
+        public Task Add(TEntity entity);
+        public Task Update(TEntity entity);
+        public Task Delete(TEntity entity);
+        public Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>>? expression = null, params string[] includeProperties);
     }
 }

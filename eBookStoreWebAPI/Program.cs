@@ -3,9 +3,10 @@ using BusinessObject.DBContext;
 using eBookStoreWebAPI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Repository.UnitOfWork;
+using DataAccess.UnitOfWork;
 using System.Diagnostics.Metrics;
 using System.Text;
 
@@ -47,11 +48,29 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseRouting();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.Use((context, next) =>
+{
+    var endpoint = context.GetEndpoint();
+    if (endpoint != null)
+    {
+        return next(context);
+    }
+
+    IEnumerable<string> templates;
+    IODataRoutingMetadata metadata = endpoint.Metadata.GetMetadata<IODataRoutingMetadata>();
+    if (metadata != null)
+    {
+        templates = metadata.Template.GetTemplates();
+    }
+
+    return next(context);
+});
 
 app.Run();

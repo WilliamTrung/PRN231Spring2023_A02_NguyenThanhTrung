@@ -9,7 +9,6 @@ namespace ClientRepository.Models
 {
     public class Role
     {
-        [Key]
         public int role_id { get; set; }
 
         public string? role_desc { get; set; }

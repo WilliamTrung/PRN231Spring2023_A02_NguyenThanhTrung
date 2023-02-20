@@ -1,27 +1,27 @@
 ﻿using BusinessObject.DBContext;
-using Repository.Repository;
-using Repository.Repository.Implement;
+using DataAccess.Repository;
+using DataAccess.Repository.Implement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository.UnitOfWork
+namespace DataAccess.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public IAuthorRepository AuthorRepository { get; } = null!;
+        public IAuthorRepository AuthorRepository { get; private set; } = null!;
 
-        public IRoleRepository RoleRepository { get; } = null!;
+        public IRoleRepository RoleRepository { get; private set; } = null!;
 
-        public IUserRepository UserRepository { get; } = null!;
+        public IUserRepository UserRepository { get; private set; } = null!;
 
-        public IPublisherRepository PublisherRepository { get; } = null!;
+        public IPublisherRepository PublisherRepository { get; private set; } = null!;
 
-        public IBookRepository BookRepository { get; } = null!;
+        public IBookRepository BookRepository { get; private set; } = null!;
 
-        public IBookAuthorRepository BookAuthorRepository { get; } = null!;
+        public IBookAuthorRepository BookAuthorRepository { get; private set; } = null!;
 
         private readonly Context _context;
 
@@ -32,17 +32,17 @@ namespace Repository.UnitOfWork
         }
         private void Init()
         {
-            IAuthorRepository AuthorRepository = new AuthorRepository(_context);
+            AuthorRepository = new AuthorRepository(_context, this);            
 
-            IRoleRepository RoleRepository = new RoleRepository(_context);
+            RoleRepository = new RoleRepository(_context, this);
 
-            IUserRepository UserRepository = new UserRepository(_context);
+            UserRepository = new UserRepository(_context, this);
 
-            IPublisherRepository PublisherRepository = new PublisherRepository(_context);
+            PublisherRepository = new PublisherRepository(_context, this);
 
-            IBookRepository BookRepository = new BookRepository(_context);
+            BookRepository = new BookRepository(_context, this);
 
-            IBookAuthorRepository BookAuthorRepository = new BookAuthorRepository(_context);
+            BookAuthorRepository = new BookAuthorRepository(_context, this);
         }
     }
 }

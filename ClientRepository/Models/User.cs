@@ -6,16 +6,14 @@ namespace ClientRepository.Models
 {
     public class User
     {
-        [Key]
         public int user_id { get; set; }
 
-        [Required]
-        [DataType(DataType.EmailAddress)]
+        [Required]        
+        [EmailAddress]
         public string? email_address { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
-        [MinLength(7)]
+        [MinLength(1)]        
         public string? password { get; set; }
 
         public string? source { get; set; }
@@ -23,15 +21,12 @@ namespace ClientRepository.Models
         public string? first_name { get; set; }
 
         public string? last_name { get; set; }
-
-        [ForeignKey("Role")]
         public int role_id { get; set; }
-        public Role? Role { get; set; }
+        public Role Role { get; set; } = null!;
 
-        [ForeignKey("Publisher")]
         public int pub_id { get; set; }
         public Publisher? Publisher { get; set; }
-        [Column(TypeName ="date")]
+        [DataType(DataType.Date)]
 
         public DateTime hire_date;
     }
