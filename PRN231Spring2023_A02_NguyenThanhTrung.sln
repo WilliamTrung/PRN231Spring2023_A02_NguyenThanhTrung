@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "Repository\DataAccess.csproj", "{341A4C8A-6B46-4EB8-A734-E11BE912E033}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientRepository", "ClientRepository\ClientRepository.csproj", "{479C43E9-8286-45A3-B57F-6AADA1261AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientRepository", "ClientRepository\ClientRepository.csproj", "{479C43E9-8286-45A3-B57F-6AADA1261AB6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessObject", "BusinessObject\BusinessObject.csproj", "{F2EF51DB-9C8A-4209-A33C-FBA0B05C607E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eBookStoreWebAPI", "BookStoreAPI\eBookStoreWebAPI.csproj", "{F7C02B16-5C64-4A16-A13D-EA52672FA06E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{8F9A8678-9057-494C-969A-139ADFE041EA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eBookStoreWebAPI", "eBookStoreWebAPI\eBookStoreWebAPI.csproj", "{D1310C75-2CE3-4153-B10D-A0D54D5234CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eBookStore", "eBookStore\eBookStore.csproj", "{70D60DC1-3210-43CA-AD3F-F9A538F81522}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{341A4C8A-6B46-4EB8-A734-E11BE912E033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{341A4C8A-6B46-4EB8-A734-E11BE912E033}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{341A4C8A-6B46-4EB8-A734-E11BE912E033}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{341A4C8A-6B46-4EB8-A734-E11BE912E033}.Release|Any CPU.Build.0 = Release|Any CPU
 		{479C43E9-8286-45A3-B57F-6AADA1261AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{479C43E9-8286-45A3-B57F-6AADA1261AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{479C43E9-8286-45A3-B57F-6AADA1261AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -29,10 +27,18 @@ Global
 		{F2EF51DB-9C8A-4209-A33C-FBA0B05C607E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2EF51DB-9C8A-4209-A33C-FBA0B05C607E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2EF51DB-9C8A-4209-A33C-FBA0B05C607E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7C02B16-5C64-4A16-A13D-EA52672FA06E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7C02B16-5C64-4A16-A13D-EA52672FA06E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7C02B16-5C64-4A16-A13D-EA52672FA06E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7C02B16-5C64-4A16-A13D-EA52672FA06E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F9A8678-9057-494C-969A-139ADFE041EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F9A8678-9057-494C-969A-139ADFE041EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F9A8678-9057-494C-969A-139ADFE041EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F9A8678-9057-494C-969A-139ADFE041EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1310C75-2CE3-4153-B10D-A0D54D5234CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1310C75-2CE3-4153-B10D-A0D54D5234CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1310C75-2CE3-4153-B10D-A0D54D5234CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1310C75-2CE3-4153-B10D-A0D54D5234CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70D60DC1-3210-43CA-AD3F-F9A538F81522}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70D60DC1-3210-43CA-AD3F-F9A538F81522}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70D60DC1-3210-43CA-AD3F-F9A538F81522}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70D60DC1-3210-43CA-AD3F-F9A538F81522}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

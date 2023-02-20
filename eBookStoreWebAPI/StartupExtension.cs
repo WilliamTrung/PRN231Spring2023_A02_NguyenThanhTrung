@@ -3,7 +3,7 @@ using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 using System.Diagnostics.Metrics;
 
-namespace BookStoreAPI
+namespace eBookStoreWebAPI
 {
     public class StartupExtension
     {

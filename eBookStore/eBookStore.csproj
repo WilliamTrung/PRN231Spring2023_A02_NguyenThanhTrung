@@ -6,4 +6,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Administrator\Books\" />
+    <Folder Include="Pages\Administrator\Authors\" />
+    <Folder Include="Pages\Administrator\Publisher\" />
+    <Folder Include="Pages\Administrator\Users\" />
+    <Folder Include="Pages\Administrator\Roles\" />
+    <Folder Include="Pages\User\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessObject\BusinessObject.csproj" />
+  </ItemGroup>
+
 </Project>

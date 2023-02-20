@@ -1,6 +1,8 @@
 using BusinessObject;
 using BusinessObject.Context;
+using eBookStoreWebAPI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repository.UnitOfWork;
@@ -11,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddOData(o => o.Select().Filter().Count().OrderBy().Expand().SetMaxTop(10).AddRouteComponents("odata", StartupExtension.GetEdmModel()));
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
