@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClientRepository.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace ClientRepository.Services.Implementation
 {
-    public class RoleService
+    public class RoleService : BaseService<Role>, IRoleService
     {
+        public RoleService(IHttpClientFactory clientFactory) : base(clientFactory)
+        {
+        }
     }
 }
