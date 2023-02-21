@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
-using BusinessObject.DBContext;
-using ClientRepository.UnitOfWork;
+using DataAccess.UnitOfWork;
 
 namespace eBookStoreWebAPI.Controllers
 {
@@ -15,33 +14,21 @@ namespace eBookStoreWebAPI.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BookController(Context context)
+        public BookController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/Book
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
-            return await _context.Books.ToListAsync();
+            var list = await _unitOfWork.BookRepository.Get();
+            return list.ToList();
         }
 
-        // GET: api/Book/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
-        {
-            var book = await _context.Books.FindAsync(id);
-
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return book;
-        }
 
         // PUT: api/Book/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -53,22 +40,14 @@ namespace eBookStoreWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.BookRepository.Update(book);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -79,9 +58,7 @@ namespace eBookStoreWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-
+            await _unitOfWork.BookRepository.Add(book);
             return CreatedAtAction("GetBook", new { id = book.book_id }, book);
         }
 
@@ -89,21 +66,15 @@ namespace eBookStoreWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _unitOfWork.BookRepository.GetFirst(expression: e => e.book_id== id);
             if (book == null)
             {
                 return NotFound();
             }
 
-            _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.BookRepository.Delete(book);
 
             return NoContent();
-        }
-
-        private bool BookExists(int id)
-        {
-            return _context.Books.Any(e => e.book_id == id);
         }
     }
 }

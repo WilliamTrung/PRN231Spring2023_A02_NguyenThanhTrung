@@ -28,7 +28,7 @@ namespace eBookStoreWebAPI.Controllers
         [EnableQuery]
         public async Task<ActionResult<IEnumerable<BookAuthor>>> GetBookAuthors()
         {
-            var result = await _unitOfWork.BookAuthorRepository.Get();
+            var result = await _unitOfWork.BookAuthorRepository.Get(expression: null, "Book", "Author");
             return result.ToList();
         }
 
@@ -61,15 +61,14 @@ namespace eBookStoreWebAPI.Controllers
             {
                 return BadRequest();
             }
-
-            var find = await _unitOfWork.BookAuthorRepository.GetFirst(expression: e => e.book_id == bookAuthor.book_id && e.author_id == bookAuthor.author_id);
-            if(find == null)
+            try
+            {
+                await _unitOfWork.BookAuthorRepository.Update(bookAuthor);
+            }
+            catch
             {
                 return NotFound();
             }
-            find.author_order = bookAuthor.author_order;
-            find.royality_percentage= bookAuthor.royality_percentage;
-            await _unitOfWork.BookAuthorRepository.Update(find);
             return NoContent();
         }
 

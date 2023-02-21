@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using DataAccess.UnitOfWork;
 
 namespace eBookStoreWebAPI.Controllers
 {
@@ -14,33 +15,23 @@ namespace eBookStoreWebAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserController(Context context)
+        public UserController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
+
+
 
         // GET: api/User
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var list = await _unitOfWork.UserRepository.Get();
+            return list.ToList();
         }
 
-        // GET: api/User/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
 
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -52,22 +43,14 @@ namespace eBookStoreWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.UserRepository.Update(user);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -78,8 +61,7 @@ namespace eBookStoreWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.UserRepository.Add(user);
 
             return CreatedAtAction("GetUser", new { id = user.user_id }, user);
         }
@@ -88,21 +70,15 @@ namespace eBookStoreWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _unitOfWork.UserRepository.GetFirst(c => c.user_id== id);
             if (user == null)
             {
                 return NotFound();
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            
+            await _unitOfWork.UserRepository.Delete(user);
 
             return NoContent();
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.user_id == id);
         }
     }
 }

@@ -37,6 +37,11 @@ namespace BusinessObject.DBContext
         {
             modelBuilder.Entity<BookAuthor>()
                 .HasKey(c => new { c.author_id, c.book_id });
+            modelBuilder.Entity<BookAuthor>().HasQueryFilter(b => b.Book.book_id == b.book_id);
+            modelBuilder.Entity<Book>().HasMany(b => b.BookAuthor).WithOne(ba => ba.Book);
+            modelBuilder.Entity<Publisher>().HasMany(c => c.Users).WithOne(ba => ba.Publisher);
+            modelBuilder.Entity<User>().HasOne(c => c.Role).WithMany(c => c.Users);
+            modelBuilder.Entity<User>().HasOne(c => c.Publisher).WithMany(c => c.Users);
             modelBuilder.Seed();
         }
     }

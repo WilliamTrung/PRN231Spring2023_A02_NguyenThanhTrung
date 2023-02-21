@@ -7,40 +7,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using DataAccess.UnitOfWork;
 
 namespace eBookStoreWebAPI.Controllers
 {
     [Route("odata/Publishers")]
     [ApiController]
-    public class PublishersController : ControllerBase
+    public class PublisherController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PublishersController(Context context)
+        public PublisherController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Publishers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Publisher>>> GetPublishers()
         {
-            return await _context.Publishers.ToListAsync();
+            var list = await _unitOfWork.PublisherRepository.Get();
+            return list.ToList();
         }
 
-        // GET: api/Publishers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Publisher>> GetPublisher(int id)
-        {
-            var publisher = await _context.Publishers.FindAsync(id);
-
-            if (publisher == null)
-            {
-                return NotFound();
-            }
-
-            return publisher;
-        }
 
         // PUT: api/Publishers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -52,22 +41,14 @@ namespace eBookStoreWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(publisher).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.PublisherRepository.Update(publisher);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PublisherExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -78,8 +59,7 @@ namespace eBookStoreWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Publisher>> PostPublisher(Publisher publisher)
         {
-            _context.Publishers.Add(publisher);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.PublisherRepository.Add(publisher);
 
             return CreatedAtAction("GetPublisher", new { id = publisher.pub_id }, publisher);
         }
@@ -88,21 +68,15 @@ namespace eBookStoreWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePublisher(int id)
         {
-            var publisher = await _context.Publishers.FindAsync(id);
+            var publisher = await _unitOfWork.PublisherRepository.GetFirst(c => c.pub_id == id);
             if (publisher == null)
             {
                 return NotFound();
             }
 
-            _context.Publishers.Remove(publisher);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.PublisherRepository.Delete(publisher);
 
             return NoContent();
-        }
-
-        private bool PublisherExists(int id)
-        {
-            return _context.Publishers.Any(e => e.pub_id == id);
         }
     }
 }

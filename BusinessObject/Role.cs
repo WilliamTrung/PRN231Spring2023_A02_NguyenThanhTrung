@@ -14,6 +14,6 @@ namespace BusinessObject
 
         public string? role_desc { get; set; }
 
-        public ICollection<User>? User { get; set; }
+        public ICollection<User>? Users { get; set; }
     }
 }

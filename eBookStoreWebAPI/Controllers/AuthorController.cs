@@ -7,32 +7,37 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.AspNetCore.OData.Query;
+using DataAccess.UnitOfWork;
 
 namespace eBookStoreWebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("odata/Authors")]
     [ApiController]
-    public class AuthorController : ControllerBase
+    public class AuthorController : ODataController
     {
-        private readonly Context _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthorController(Context context)
+        public AuthorController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/Author
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
-            return await _context.Authors.ToListAsync();
+            var list = await _unitOfWork.AuthorRepository.Get();
+            return list.ToList();
         }
 
         // GET: api/Author/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-            var author = await _context.Authors.FindAsync(id);
+            var author = await _unitOfWork.AuthorRepository.GetFirst(expression: a => a.author_id == id, "Book", "Author");
 
             if (author == null)
             {
@@ -52,22 +57,12 @@ namespace eBookStoreWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(author).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
+                await _unitOfWork.AuthorRepository.Update(author);
+            } catch
             {
-                if (!AuthorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -78,9 +73,7 @@ namespace eBookStoreWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
-            _context.Authors.Add(author);
-            await _context.SaveChangesAsync();
-
+            await _unitOfWork.AuthorRepository.Add(author);            
             return CreatedAtAction("GetAuthor", new { id = author.author_id }, author);
         }
 
@@ -88,21 +81,14 @@ namespace eBookStoreWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
-            var author = await _context.Authors.FindAsync(id);
+            var author = await _unitOfWork.AuthorRepository.GetFirst(expression: a => a.author_id == id);
             if (author == null)
             {
                 return NotFound();
             }
 
-            _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
-
+            await _unitOfWork.AuthorRepository.Delete(author);
             return NoContent();
-        }
-
-        private bool AuthorExists(int id)
-        {
-            return _context.Authors.Any(e => e.author_id == id);
         }
     }
 }

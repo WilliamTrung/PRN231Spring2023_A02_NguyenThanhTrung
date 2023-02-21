@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using DataAccess.UnitOfWork;
 
 namespace eBookStoreWebAPI.Controllers
 {
@@ -14,34 +15,20 @@ namespace eBookStoreWebAPI.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RoleController(Context context)
+        public RoleController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Roles
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
         {
-            return await _context.Roles.ToListAsync();
+            var list = await _unitOfWork.RoleRepository.Get();
+            return list.ToList();
         }
-
-        // GET: api/Roles/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
-        {
-            var role = await _context.Roles.FindAsync(id);
-
-            if (role == null)
-            {
-                return NotFound();
-            }
-
-            return role;
-        }
-
         // PUT: api/Roles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -52,22 +39,14 @@ namespace eBookStoreWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(role).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.RoleRepository.Update(role);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -78,8 +57,7 @@ namespace eBookStoreWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
-            _context.Roles.Add(role);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.RoleRepository.Add(role);
 
             return CreatedAtAction("GetRole", new { id = role.role_id }, role);
         }
@@ -88,21 +66,12 @@ namespace eBookStoreWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _unitOfWork.RoleRepository.GetFirst(c => c.role_id == id);
             if (role == null)
             {
                 return NotFound();
             }
-
-            _context.Roles.Remove(role);
-            await _context.SaveChangesAsync();
-
             return NoContent();
-        }
-
-        private bool RoleExists(int id)
-        {
-            return _context.Roles.Any(e => e.role_id == id);
         }
     }
 }

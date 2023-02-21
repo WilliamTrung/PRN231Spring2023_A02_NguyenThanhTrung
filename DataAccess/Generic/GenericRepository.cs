@@ -46,7 +46,8 @@ namespace DataAccess.Generic
 
         public virtual async Task Update(TEntity entity)
         {
-            _entities.Update(entity);
+            //_entities.Update(entity);
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 
