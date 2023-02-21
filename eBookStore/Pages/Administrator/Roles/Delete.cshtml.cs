@@ -20,40 +20,40 @@ namespace eBookStore.Pages.Administrator.Roles
         }
 
         [BindProperty]
-      public Author Author { get; set; }
+      public Role Role { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Authors == null)
+            if (id == null || _context.Roles == null)
             {
                 return NotFound();
             }
 
-            var author = await _context.Authors.FirstOrDefaultAsync(m => m.author_id == id);
+            var role = await _context.Roles.FirstOrDefaultAsync(m => m.Role_id == id);
 
-            if (author == null)
+            if (role == null)
             {
                 return NotFound();
             }
             else 
             {
-                Author = author;
+                role = role;
             }
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.Authors == null)
+            if (id == null || _context.Roles == null)
             {
                 return NotFound();
             }
-            var author = await _context.Authors.FindAsync(id);
+            var role = await _context.Roles.FindAsync(id);
 
-            if (author != null)
+            if (role != null)
             {
-                Author = author;
-                _context.Authors.Remove(Author);
+                role = role;
+                _context.Roles.Remove(Role);
                 await _context.SaveChangesAsync();
             }
 
