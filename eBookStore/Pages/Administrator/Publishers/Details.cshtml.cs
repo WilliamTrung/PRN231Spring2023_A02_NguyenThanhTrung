@@ -7,37 +7,42 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
 
 namespace eBookStore.Pages.Administrator.Publishers
 {
     public class DetailsModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DetailsModel(BusinessObject.DBContext.Context context)
+        public DetailsModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
-        public Publisher Publisher { get; set; }
+        public Publisher Publisher { get; set; } = null!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Publishers == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var publisher = await _context.Publishers.FirstOrDefaultAsync(m => m.Publisher_id == id);
-            if (publisher == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.GetAsync("Publishers?$filter= Publisher_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var publishers = await response.Content.ReadFromJsonAsync<List<Publisher>>();
+                var publisher = publishers.FirstOrDefault();
+                if (publisher != null)
+                {
+                    Publisher = publisher;
+                    return Page();
+                }
             }
-            else
-            {
-                publisher = publisher;
-            }
-            return Page();
+            return RedirectToPage("./Index");
         }
     }
 }

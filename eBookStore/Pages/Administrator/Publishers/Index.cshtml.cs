@@ -7,26 +7,47 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
 
 namespace eBookStore.Pages.Administrator.Publishers
 {
     public class IndexModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public IndexModel(BusinessObject.DBContext.Context context)
+        public IndexModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = _httpClientFactory.CreateClient("BaseClient");
         }
 
         public IList<Publisher> Publisher { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.Publishers != null)
+            try
             {
-                Publisher = await _context.Publishers.ToListAsync();
+                client.AddTokenHeader(HttpContext.Session.GetString("token"));
+                var response = await client.GetAsync(requestUri: "Publishers");
+                if (response.IsSuccessStatusCode)
+                {
+                    var Publishers = await response.Content.ReadFromJsonAsync<List<Publisher>>();
+                    if (Publishers != null)
+                    {
+                        Publisher = Publishers;
+                    }
+                }
+                else
+                {
+                    ViewData["Error"] = response.StatusCode;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
+
     }
 }

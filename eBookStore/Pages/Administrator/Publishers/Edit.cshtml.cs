@@ -8,16 +8,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
 
 namespace eBookStore.Pages.Administrator.Publishers
 {
     public class EditModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public EditModel(BusinessObject.DBContext.Context context)
+        public EditModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
         [BindProperty]
@@ -25,18 +28,24 @@ namespace eBookStore.Pages.Administrator.Publishers
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Publishers == null)
+            if (id == null)
             {
                 return NotFound();
             }
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
 
-            var publisher = await _context.Publishers.FirstOrDefaultAsync(m => m.Publisher_id == id);
-            if (publisher == null)
+            var response = await client.GetAsync("Publishers?$filter= Publisher_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var publisers = await response.Content.ReadFromJsonAsync<List<Publisher>>();
+                var publiser = publisers.FirstOrDefault();
+                if (publiser != null)
+                {
+                    Publisher = publiser;
+                    return Page();
+                }
             }
-            publisher = publisher;
-            return Page();
+            return RedirectToPage("./Index");
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -47,31 +56,16 @@ namespace eBookStore.Pages.Administrator.Publishers
             {
                 return Page();
             }
-
-            _context.Attach(Publisher).State = EntityState.Modified;
-
-            try
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.PutAsJsonAsync("Publishers/" + Publisher.pub_id.ToString(), Publisher);
+            if (response.IsSuccessStatusCode)
             {
-                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                if (!PublisherExists(Publisher.Publisher_id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Page();
             }
-
-            return RedirectToPage("./Index");
-        }
-
-        private bool PublisherExists(int id)
-        {
-            return _context.Publishers.Any(e => e.Publisher_id == id);
         }
     }
 }

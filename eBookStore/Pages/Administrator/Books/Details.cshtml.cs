@@ -7,37 +7,42 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
 
 namespace eBookStore.Pages.Administrator.Books
 {
     public class DetailsModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DetailsModel(BusinessObject.DBContext.Context context)
+        public DetailsModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
-        public Book Book { get; set; }
+        public Book Book { get; set; } = null!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Books == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var book = await _context.Books.FirstOrDefaultAsync(m => m.Book_id == id);
-            if (book == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.GetAsync("Books?$filter= Book_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var books = await response.Content.ReadFromJsonAsync<List<Book>>();
+                var book = books.FirstOrDefault();
+                if (book != null)
+                {
+                    Book = book;
+                    return Page();
+                }
             }
-            else
-            {
-                Book = book;
-            }
-            return Page();
+            return RedirectToPage("./Index");
         }
     }
 }

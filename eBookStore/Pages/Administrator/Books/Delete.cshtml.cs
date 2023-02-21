@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
 
 namespace eBookStore.Pages.Administrator.Books
 {
     public class DeleteModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DeleteModel(BusinessObject.DBContext.Context context)
+        public DeleteModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
         [BindProperty]
@@ -24,39 +27,36 @@ namespace eBookStore.Pages.Administrator.Books
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Books == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var book = await _context.Books.FirstOrDefaultAsync(m => m.Book_id == id);
-
-            if (book == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.GetAsync("Books?$filter= Book_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var books = await response.Content.ReadFromJsonAsync<List<Book>>();
+                var book = books.FirstOrDefault();
+                if (book != null)
+                {
+                    Book = book;
+                    return Page();
+                }
             }
-            else
-            {
-                book = book;
-            }
-            return Page();
+            return RedirectToPage("./Index");
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.Books == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.DeleteAsync("Books/" + Book.book_id.ToString());
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                return RedirectToPage("./Index");
             }
-            var book = await _context.Books.FindAsync(id);
-
-            if (book != null)
+            else
             {
-                book = book;
-                _context.Books.Remove(Book);
-                await _context.SaveChangesAsync();
+                return Page();
             }
-
-            return RedirectToPage("./Index");
         }
     }

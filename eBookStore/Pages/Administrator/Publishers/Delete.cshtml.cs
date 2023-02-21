@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
 
 namespace eBookStore.Pages.Administrator.Publishers
 {
     public class DeleteModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DeleteModel(BusinessObject.DBContext.Context context)
+        public DeleteModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
         [BindProperty]
@@ -24,40 +27,37 @@ namespace eBookStore.Pages.Administrator.Publishers
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Books == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var publisher = await _context.Books.FirstOrDefaultAsync(m => m.Book_id == id);
-
-            if (publisher == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.GetAsync("Publishers?$filter= Publisher_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var publishers = await response.Content.ReadFromJsonAsync<List<Publisher>>();
+                var publisher = publishers.FirstOrDefault();
+                if (publisher != null)
+                {
+                    Publisher = publisher;
+                    return Page();
+                }
             }
-            else
-            {
-                publisher = publisher;
-            }
-            return Page();
+            return RedirectToPage("./Index");
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.Publishers == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.DeleteAsync("Publishers/" + Publisher.pub_id.ToString());
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                return RedirectToPage("./Index");
             }
-            var book = await _context.Books.FindAsync(id);
-
-            if (book != null)
+            else
             {
-                publisher = publisher;
-                _context.Books.Remove(Publisher);
-                await _context.SaveChangesAsync();
+                return Page();
             }
-
-            return RedirectToPage("./Index");
         }
     }
 }

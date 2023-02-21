@@ -48,14 +48,14 @@ namespace eBookStore.Pages
                     {"token", token }
                 };
                 var response_getlogin = await client.GetAsync("login" + HttpRequestSupport.GetQueryPath(login));
-                User member = (User)await response_getlogin.Content.ReadFromJsonAsync(typeof(User));
-                HttpContext.Session.SetLoginUser(member);
-                if (member.email_address.Contains("admin"))
+                User user = (User)await response_getlogin.Content.ReadFromJsonAsync(typeof(User));
+                HttpContext.Session.SetLoginUser(user);
+                if (user.email_address.Contains("admin"))
                 {
                     HttpContext.Session.SetString("role", "Administrator");
                     return RedirectToPage("/Administrator/Users/Index");
                 }
-                return RedirectToPage("User/Profile");
+                return RedirectToPage("General/Details");
             }
             return Page();
         }

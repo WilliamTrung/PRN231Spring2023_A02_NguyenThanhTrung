@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
 
 namespace eBookStore.Pages.Administrator.Publishers
 {
     public class CreateModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public CreateModel(BusinessObject.DBContext.Context context)
+        public CreateModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
         public IActionResult OnGet()
@@ -25,7 +28,7 @@ namespace eBookStore.Pages.Administrator.Publishers
         }
 
         [BindProperty]
-        public Publisher Publisher { get; set; }
+        public Publisher Publisher { get; set; } = null!;
 
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
@@ -36,10 +39,11 @@ namespace eBookStore.Pages.Administrator.Publishers
                 return Page();
             }
 
-            _context.Publishers.Add(Publisher);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.PostAsJsonAsync("Publishers", Publisher);
+            if (response.IsSuccessStatusCode)
+                return RedirectToPage("./Index");
+            return Page();
         }
     }
 }

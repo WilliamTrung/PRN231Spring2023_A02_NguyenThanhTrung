@@ -99,7 +99,7 @@ namespace eBookStoreWebAPI.Controllers
                     {
                             new Claim("id", login.user_id.ToString()),
                             new Claim(ClaimTypes.Email, login.email_address),
-                            new Claim(ClaimTypes.Role, login.Role.role_desc),
+                            new Claim(ClaimTypes.Role, login.role_id.ToString()),
                     };
                     return Ok(GenerateToken(claims));
                 }
