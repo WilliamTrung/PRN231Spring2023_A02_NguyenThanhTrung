@@ -28,6 +28,6 @@ namespace ClientRepository.Models
 
         public string email_address { get; set; } = null!;
 
-        public BookAuthor? BookAuthor { get; set; }
+        public ICollection<BookAuthor>? BookAuthors { get; set; }
     }
 }

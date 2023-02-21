@@ -1,6 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.SqlTypes;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ClientRepository.Models
 {
@@ -8,12 +12,11 @@ namespace ClientRepository.Models
     {
         public int user_id { get; set; }
 
-        [Required]        
-        [EmailAddress]
+        [Required]
         public string? email_address { get; set; }
 
         [Required]
-        [MinLength(1)]        
+        [MinLength(1)]
         public string? password { get; set; }
 
         public string? source { get; set; }
@@ -21,12 +24,15 @@ namespace ClientRepository.Models
         public string? first_name { get; set; }
 
         public string? last_name { get; set; }
-        public int role_id { get; set; }
-        public Role Role { get; set; } = null!;
 
+        [ForeignKey("Role")]
+        public int role_id { get; set; }
+        public Role? Role { get; set; }
+
+        [ForeignKey("Publisher")]
         public int pub_id { get; set; }
         public Publisher? Publisher { get; set; }
-        [DataType(DataType.Date)]
+        [Column(TypeName = "date")]
 
         public DateTime hire_date;
     }

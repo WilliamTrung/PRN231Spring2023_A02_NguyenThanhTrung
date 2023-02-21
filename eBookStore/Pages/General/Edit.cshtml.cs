@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
 
-namespace eBookStore.Pages.Administrator.Books
+namespace eBookStore.Pages.General
 {
     public class EditModel : PageModel
     {
@@ -21,22 +21,23 @@ namespace eBookStore.Pages.Administrator.Books
         }
 
         [BindProperty]
-        public Book Book { get; set; } = default!;
+        public User User { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Books == null)
+            if (id == null || _context.Users == null)
             {
                 return NotFound();
             }
 
-            var book =  await _context.Books.FirstOrDefaultAsync(m => m.book_id == id);
-            if (book == null)
+            var user =  await _context.Users.FirstOrDefaultAsync(m => m.user_id == id);
+            if (user == null)
             {
                 return NotFound();
             }
-            Book = book;
+            User = user;
            ViewData["pub_id"] = new SelectList(_context.Publishers, "pub_id", "city");
+           ViewData["role_id"] = new SelectList(_context.Roles, "role_id", "role_id");
             return Page();
         }
 
@@ -49,7 +50,7 @@ namespace eBookStore.Pages.Administrator.Books
                 return Page();
             }
 
-            _context.Attach(Book).State = EntityState.Modified;
+            _context.Attach(User).State = EntityState.Modified;
 
             try
             {
@@ -57,7 +58,7 @@ namespace eBookStore.Pages.Administrator.Books
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(Book.book_id))
+                if (!UserExists(User.user_id))
                 {
                     return NotFound();
                 }
@@ -70,9 +71,9 @@ namespace eBookStore.Pages.Administrator.Books
             return RedirectToPage("./Index");
         }
 
-        private bool BookExists(int id)
+        private bool UserExists(int id)
         {
-          return _context.Books.Any(e => e.book_id == id);
+          return _context.Users.Any(e => e.user_id == id);
         }
     }
 }

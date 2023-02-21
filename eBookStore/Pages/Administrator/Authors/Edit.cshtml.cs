@@ -8,16 +8,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
+using System.Diagnostics.Metrics;
 
 namespace eBookStore.Pages.Administrator.Authors
 {
     public class EditModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public EditModel(BusinessObject.DBContext.Context context)
+        public EditModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
         [BindProperty]
@@ -25,18 +29,22 @@ namespace eBookStore.Pages.Administrator.Authors
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Authors == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var author =  await _context.Authors.FirstOrDefaultAsync(m => m.author_id == id);
-            if (author == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.GetAsync("Authors?$filter = author_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var author = await response.Content.ReadFromJsonAsync<Author>();
+                if (author != null)
+                {
+                    Author = author;
+                    return Page();
+                }
             }
-            Author = author;
-            return Page();
+            return RedirectToPage("./Index");
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -47,31 +55,16 @@ namespace eBookStore.Pages.Administrator.Authors
             {
                 return Page();
             }
-
-            _context.Attach(Author).State = EntityState.Modified;
-
-            try
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.PutAsJsonAsync("Authors/" + Author.author_id.ToString(), Author);
+            if (response.IsSuccessStatusCode)
             {
-                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                if (!AuthorExists(Author.author_id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Page();
             }
-
-            return RedirectToPage("./Index");
-        }
-
-        private bool AuthorExists(int id)
-        {
-          return _context.Authors.Any(e => e.author_id == id);
         }
     }
 }

@@ -5,28 +5,51 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using BusinessObject;
-using BusinessObject.DBContext;
+using ClientRepository.Extension;
+using ClientRepository.Models;
 
 namespace eBookStore.Pages.Administrator.Authors
 {
     public class IndexModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public IndexModel(BusinessObject.DBContext.Context context)
+        public IndexModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = _httpClientFactory.CreateClient("BaseClient");
         }
 
         public IList<Author> Author { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.Authors != null)
+            try
             {
-                Author = await _context.Authors.ToListAsync();
+                client.AddTokenHeader(HttpContext.Session.GetString("token"));
+                var response = await client.GetAsync(requestUri: "Authors");
+                if (response.IsSuccessStatusCode)
+                {
+                    var authors = await response.Content.ReadFromJsonAsync<List<Author>>();
+                    //if (content != null)
+                    //{
+                    //var products = JsonSerializer.Deserialize<List<Product>>(content, jsonOption);
+                    if (authors != null)
+                    {
+                        Author = authors;
+                    }
+                    //}
+                }
+                else
+                {
+                    ViewData["Error"] = response.StatusCode;
+                }
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
+
     }
 }

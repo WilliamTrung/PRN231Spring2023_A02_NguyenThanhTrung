@@ -28,6 +28,8 @@ namespace ClientRepository.Models
         public string? note { get; set; }
         public DateTime published_date { get; set; }
 
-        public ICollection<BookAuthor> BookAuthor { get; set; } = null!;
+        public ICollection<BookAuthor>? BookAuthor { get; set; }
+
+        public Publisher? Publisher { get; set; }
     }
 }

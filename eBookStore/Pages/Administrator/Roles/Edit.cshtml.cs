@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
 
-namespace eBookStore.Pages.Administrator.Books
+namespace eBookStore.Pages.Administrator.Roles
 {
     public class EditModel : PageModel
     {
@@ -21,22 +21,21 @@ namespace eBookStore.Pages.Administrator.Books
         }
 
         [BindProperty]
-        public Book Book { get; set; } = default!;
+        public Author Author { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Books == null)
+            if (id == null || _context.Authors == null)
             {
                 return NotFound();
             }
 
-            var book =  await _context.Books.FirstOrDefaultAsync(m => m.book_id == id);
-            if (book == null)
+            var author =  await _context.Authors.FirstOrDefaultAsync(m => m.author_id == id);
+            if (author == null)
             {
                 return NotFound();
             }
-            Book = book;
-           ViewData["pub_id"] = new SelectList(_context.Publishers, "pub_id", "city");
+            Author = author;
             return Page();
         }
 
@@ -49,7 +48,7 @@ namespace eBookStore.Pages.Administrator.Books
                 return Page();
             }
 
-            _context.Attach(Book).State = EntityState.Modified;
+            _context.Attach(Author).State = EntityState.Modified;
 
             try
             {
@@ -57,7 +56,7 @@ namespace eBookStore.Pages.Administrator.Books
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(Book.book_id))
+                if (!AuthorExists(Author.author_id))
                 {
                     return NotFound();
                 }
@@ -70,9 +69,9 @@ namespace eBookStore.Pages.Administrator.Books
             return RedirectToPage("./Index");
         }
 
-        private bool BookExists(int id)
+        private bool AuthorExists(int id)
         {
-          return _context.Books.Any(e => e.book_id == id);
+          return _context.Authors.Any(e => e.author_id == id);
         }
     }
 }

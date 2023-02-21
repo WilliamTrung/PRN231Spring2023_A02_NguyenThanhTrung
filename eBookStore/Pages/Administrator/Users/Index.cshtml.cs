@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
 
-namespace eBookStore.Pages.Administrator.Books
+namespace eBookStore.Pages.Administrator.Users
 {
     public class IndexModel : PageModel
     {
@@ -19,14 +19,15 @@ namespace eBookStore.Pages.Administrator.Books
             _context = context;
         }
 
-        public IList<Book> Book { get;set; } = default!;
+        public IList<User> User { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.Books != null)
+            if (_context.Users != null)
             {
-                Book = await _context.Books
-                .Include(b => b.Publisher).ToListAsync();
+                User = await _context.Users
+                .Include(u => u.Publisher)
+                .Include(u => u.Role).ToListAsync();
             }
         }
     }

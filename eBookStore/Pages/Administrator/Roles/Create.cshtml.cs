@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using BusinessObject;
 using BusinessObject.DBContext;
 
-namespace eBookStore.Pages.Administrator.Books
+namespace eBookStore.Pages.Administrator.Roles
 {
     public class CreateModel : PageModel
     {
@@ -21,12 +21,11 @@ namespace eBookStore.Pages.Administrator.Books
 
         public IActionResult OnGet()
         {
-        ViewData["pub_id"] = new SelectList(_context.Publishers, "pub_id", "city");
             return Page();
         }
 
         [BindProperty]
-        public Book Book { get; set; }
+        public Author Author { get; set; }
         
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
@@ -37,7 +36,7 @@ namespace eBookStore.Pages.Administrator.Books
                 return Page();
             }
 
-            _context.Books.Add(Book);
+            _context.Authors.Add(Author);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

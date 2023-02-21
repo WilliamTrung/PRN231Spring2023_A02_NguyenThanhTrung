@@ -7,57 +7,57 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
+using ClientRepository.Extension;
+using System.Diagnostics.Metrics;
 
 namespace eBookStore.Pages.Administrator.Authors
 {
     public class DeleteModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DeleteModel(BusinessObject.DBContext.Context context)
+        public DeleteModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
         [BindProperty]
-      public Author Author { get; set; }
+        public Author Author { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Authors == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var author = await _context.Authors.FirstOrDefaultAsync(m => m.author_id == id);
-
-            if (author == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.GetAsync("Authors?$filter = author_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var author = await response.Content.ReadFromJsonAsync<Author>();
+                if (author != null)
+                {
+                    Author = author;
+                    return Page();
+                }
             }
-            else 
-            {
-                Author = author;
-            }
-            return Page();
+            return RedirectToPage("./Index");
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.Authors == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.DeleteAsync("Authors/" + Author.author_id.ToString());
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                return RedirectToPage("./Index");
             }
-            var author = await _context.Authors.FindAsync(id);
-
-            if (author != null)
+            else
             {
-                Author = author;
-                _context.Authors.Remove(Author);
-                await _context.SaveChangesAsync();
+                return Page();
             }
-
-            return RedirectToPage("./Index");
         }
     }
 }

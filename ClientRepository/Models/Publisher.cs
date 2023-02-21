@@ -20,6 +20,7 @@ namespace ClientRepository.Models
 
         public string country { get; set; } = null!;
 
-        public ICollection<User>? User { get; set; }
+        public ICollection<User>? Users { get; set; }
+        public ICollection<Book>? Books { get; set; }
     }
 }

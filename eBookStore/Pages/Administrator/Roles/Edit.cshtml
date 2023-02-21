@@ -1,0 +1,70 @@
+﻿@page
+@model eBookStore.Pages.Administrator.Roles.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Author</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Author.author_id" />
+            <div class="form-group">
+                <label asp-for="Author.last_name" class="control-label"></label>
+                <input asp-for="Author.last_name" class="form-control" />
+                <span asp-validation-for="Author.last_name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author.first_name" class="control-label"></label>
+                <input asp-for="Author.first_name" class="form-control" />
+                <span asp-validation-for="Author.first_name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author.phone" class="control-label"></label>
+                <input asp-for="Author.phone" class="form-control" />
+                <span asp-validation-for="Author.phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author.address" class="control-label"></label>
+                <input asp-for="Author.address" class="form-control" />
+                <span asp-validation-for="Author.address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author.city" class="control-label"></label>
+                <input asp-for="Author.city" class="form-control" />
+                <span asp-validation-for="Author.city" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author.state" class="control-label"></label>
+                <input asp-for="Author.state" class="form-control" />
+                <span asp-validation-for="Author.state" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author.zip" class="control-label"></label>
+                <input asp-for="Author.zip" class="form-control" />
+                <span asp-validation-for="Author.zip" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author.email_address" class="control-label"></label>
+                <input asp-for="Author.email_address" class="form-control" />
+                <span asp-validation-for="Author.email_address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
