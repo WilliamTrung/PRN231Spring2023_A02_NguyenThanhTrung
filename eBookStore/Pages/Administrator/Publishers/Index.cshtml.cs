@@ -19,7 +19,7 @@ namespace eBookStore.Pages.Administrator.Publishers
             _context = context;
         }
 
-        public IList<Publisher> Publisher { get;set; } = default!;
+        public IList<Publisher> Publisher { get; set; } = default!;
 
         public async Task OnGetAsync()
         {

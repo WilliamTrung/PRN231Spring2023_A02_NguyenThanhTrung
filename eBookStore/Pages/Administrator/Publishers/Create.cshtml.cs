@@ -26,12 +26,12 @@ namespace eBookStore.Pages.Administrator.Publishers
 
         [BindProperty]
         public Publisher Publisher { get; set; }
-        
+
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return Page();
             }
