@@ -13,11 +13,13 @@ namespace eBookStore.Pages.Administrator.Users
 {
     public class EditModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public EditModel(BusinessObject.DBContext.Context context)
+        public EditModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
         [BindProperty]
@@ -25,20 +27,24 @@ namespace eBookStore.Pages.Administrator.Users
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Users == null)
+            if (id == null)
             {
                 return NotFound();
             }
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
 
-            var user =  await _context.Users.FirstOrDefaultAsync(m => m.user_id == id);
-            if (user == null)
+            var response = await client.GetAsync("Users?$filter= User_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var users = await response.Content.ReadFromJsonAsync<List<User>>();
+                var user = Users.FirstOrDefault();
+                if (User != null)
+                {
+                    user = user;
+                    return Page();
+                }
             }
-            User = user;
-           ViewData["pub_id"] = new SelectList(_context.Publishers, "pub_id", "city");
-           ViewData["role_id"] = new SelectList(_context.Roles, "role_id", "role_id");
-            return Page();
+            return RedirectToPage("./Index");
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -49,31 +55,16 @@ namespace eBookStore.Pages.Administrator.Users
             {
                 return Page();
             }
-
-            _context.Attach(User).State = EntityState.Modified;
-
-            try
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.PutAsJsonAsync("Users/" + User.User_id.ToString(), User);
+            if (response.IsSuccessStatusCode)
             {
-                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                if (!UserExists(User.user_id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Page();
             }
-
-            return RedirectToPage("./Index");
-        }
-
-        private bool UserExists(int id)
-        {
-          return _context.Users.Any(e => e.user_id == id);
         }
     }
 }

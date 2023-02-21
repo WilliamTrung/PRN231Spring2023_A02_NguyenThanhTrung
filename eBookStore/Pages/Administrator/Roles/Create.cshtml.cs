@@ -25,7 +25,7 @@ namespace eBookStore.Pages.Administrator.Roles
         }
 
         [BindProperty]
-        public Author Author { get; set; }
+        public Role Role { get; set; }
         
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
@@ -36,7 +36,7 @@ namespace eBookStore.Pages.Administrator.Roles
                 return Page();
             }
 
-            _context.Authors.Add(Author);
+            _context.Roles.Add(Role);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

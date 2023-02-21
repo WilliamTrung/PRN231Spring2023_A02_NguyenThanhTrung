@@ -21,21 +21,21 @@ namespace eBookStore.Pages.Administrator.Roles
         }
 
         [BindProperty]
-        public Author Author { get; set; } = default!;
+        public Role Role { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Authors == null)
+            if (id == null || _context.Roles == null)
             {
                 return NotFound();
             }
 
-            var author =  await _context.Authors.FirstOrDefaultAsync(m => m.author_id == id);
-            if (author == null)
+            var role =  await _context.Roles.FirstOrDefaultAsync(m => m.Role_id == id);
+            if (role == null)
             {
                 return NotFound();
             }
-            Author = author;
+            role = role;
             return Page();
         }
 
@@ -48,7 +48,7 @@ namespace eBookStore.Pages.Administrator.Roles
                 return Page();
             }
 
-            _context.Attach(Author).State = EntityState.Modified;
+            _context.Attach(Role).State = EntityState.Modified;
 
             try
             {
@@ -56,7 +56,7 @@ namespace eBookStore.Pages.Administrator.Roles
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AuthorExists(Author.author_id))
+                if (!RoleExists(Role.Role_id))
                 {
                     return NotFound();
                 }
@@ -69,9 +69,9 @@ namespace eBookStore.Pages.Administrator.Roles
             return RedirectToPage("./Index");
         }
 
-        private bool AuthorExists(int id)
+        private bool RoleExists(int id)
         {
-          return _context.Authors.Any(e => e.author_id == id);
+          return _context.Roles.Any(e => e.Role_id == id);
         }
     }
 }

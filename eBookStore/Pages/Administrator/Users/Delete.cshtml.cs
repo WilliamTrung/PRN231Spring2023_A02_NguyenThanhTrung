@@ -12,52 +12,51 @@ namespace eBookStore.Pages.Administrator.Users
 {
     public class DeleteModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DeleteModel(BusinessObject.DBContext.Context context)
+        public DeleteModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
         [BindProperty]
-      public User User { get; set; }
+        public User User { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Users == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var user = await _context.Users.FirstOrDefaultAsync(m => m.user_id == id);
-
-            if (user == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.GetAsync("Users?$filter= User_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var users = await response.Content.ReadFromJsonAsync<List<User>>();
+                var user = Users.FirstOrDefault();
+                if (user != null)
+                {
+                    user = user;
+                    return Page();
+                }
             }
-            else 
-            {
-                User = user;
-            }
-            return Page();
+            return RedirectToPage("./Index");
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.Users == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.DeleteAsync("Users/" + User.User_id.ToString());
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                return RedirectToPage("./Index");
             }
-            var user = await _context.Users.FindAsync(id);
-
-            if (user != null)
+            else
             {
-                User = user;
-                _context.Users.Remove(User);
-                await _context.SaveChangesAsync();
+                return Page();
             }
-
-            return RedirectToPage("./Index");
         }
     }
 }
