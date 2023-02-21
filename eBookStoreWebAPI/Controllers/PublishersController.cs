@@ -10,7 +10,7 @@ using BusinessObject.DBContext;
 
 namespace eBookStoreWebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("odata/Publishers")]
     [ApiController]
     public class PublishersController : ControllerBase
     {

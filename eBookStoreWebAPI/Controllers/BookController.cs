@@ -11,7 +11,7 @@ using ClientRepository.UnitOfWork;
 
 namespace eBookStoreWebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("odata/Books")]
     [ApiController]
     public class BookController : ControllerBase
     {
