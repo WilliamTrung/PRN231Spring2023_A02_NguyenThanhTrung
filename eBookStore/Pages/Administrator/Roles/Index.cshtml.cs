@@ -19,13 +19,13 @@ namespace eBookStore.Pages.Administrator.Roles
             _context = context;
         }
 
-        public IList<Author> Author { get;set; } = default!;
+        public IList<Role> Role { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.Authors != null)
+            if (_context.Roles != null)
             {
-                Author = await _context.Authors.ToListAsync();
+                Role = await _context.Roles.ToListAsync();
             }
         }
     }

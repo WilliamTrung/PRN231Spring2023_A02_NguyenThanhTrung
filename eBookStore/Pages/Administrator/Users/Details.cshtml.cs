@@ -12,32 +12,36 @@ namespace eBookStore.Pages.Administrator.Users
 {
     public class DetailsModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public DetailsModel(BusinessObject.DBContext.Context context)
+        public DetailsModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = httpClientFactory.CreateClient("BaseClient");
         }
 
-      public User User { get; set; }
+        public User User { get; set; } = null!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Users == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var user = await _context.Users.FirstOrDefaultAsync(m => m.user_id == id);
-            if (user == null)
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));
+            var response = await client.GetAsync("Users?$filter= User_id eq " + ((int)id).ToString());
+            if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                return NotFound();
+                var users = await response.Content.ReadFromJsonAsync<List<User>>();
+                var user = Users.FirstOrDefault();
+                if (User != null)
+                {
+                    user = user;
+                    return Page();
+                }
             }
-            else 
-            {
-                User = user;
-            }
-            return Page();
+            return RedirectToPage("./Index");
         }
     }
 }

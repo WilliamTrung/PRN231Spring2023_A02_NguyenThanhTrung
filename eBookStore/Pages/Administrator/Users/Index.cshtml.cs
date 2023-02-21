@@ -12,23 +12,41 @@ namespace eBookStore.Pages.Administrator.Users
 {
     public class IndexModel : PageModel
     {
-        private readonly BusinessObject.DBContext.Context _context;
+        private HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public IndexModel(BusinessObject.DBContext.Context context)
+        public IndexModel(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            client = _httpClientFactory.CreateClient("BaseClient");
         }
 
-        public IList<User> User { get;set; } = default!;
+        public IList<User> User { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.Users != null)
+            try
             {
-                User = await _context.Users
-                .Include(u => u.Publisher)
-                .Include(u => u.Role).ToListAsync();
+                client.AddTokenHeader(HttpContext.Session.GetString("token"));
+                var response = await client.GetAsync(requestUri: "Users");
+                if (response.IsSuccessStatusCode)
+                {
+                    var users = await response.Content.ReadFromJsonAsync<List<User>>();
+                    if (users != null)
+                    {
+                        user = users;
+                    }
+                }
+                else
+                {
+                    ViewData["Error"] = response.StatusCode;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
+
     }
 }
