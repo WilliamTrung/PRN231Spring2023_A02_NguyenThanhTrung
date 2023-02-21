@@ -9,12 +9,17 @@ using Microsoft.IdentityModel.Tokens;
 using DataAccess.UnitOfWork;
 using System.Diagnostics.Metrics;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddOData(o => o.Select().Filter().Count().OrderBy().Expand().SetMaxTop(10).AddRouteComponents("odata", StartupExtension.GetEdmModel()));
+builder.Services.AddControllers().AddOData(o => o.Select().Filter().Count().OrderBy().Expand().SetMaxTop(10).AddRouteComponents("odata", StartupExtension.GetEdmModel()))
+    .AddJsonOptions(
+          options => {
+              options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+          });
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

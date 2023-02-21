@@ -75,6 +75,7 @@ namespace BusinessObject.DBContext
                 new Book
                 {
                     book_id = 1,
+                    pub_id= 1,
                     title = "The life of Author 1",
                     type = "Romantic",
                     price = 300000,
@@ -87,6 +88,7 @@ namespace BusinessObject.DBContext
                 new Book
                 {
                     book_id = 2,
+                    pub_id= 2,
                     title = "The adventure of Author 2",
                     type = "Adventure",
                     price = 300000,

@@ -13,6 +13,8 @@ namespace BusinessObject
     {
         [Key]
         public int book_id { get; set; }
+        [ForeignKey("Publisher")]
+        public int pub_id { get; set; } 
 
         public string title { get; set; } = null!;
 
@@ -33,6 +35,8 @@ namespace BusinessObject
 
         public DateTime published_date { get; set; }
 
-        public ICollection<BookAuthor>? BookAuthor { get; set; }
+        public virtual ICollection<BookAuthor>? BookAuthor { get; set; }
+        
+        public virtual Publisher? Publisher { get; set; }
     }
 }

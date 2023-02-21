@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
 using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace eBookStoreWebAPI.Controllers
 {
@@ -24,6 +25,7 @@ namespace eBookStoreWebAPI.Controllers
 
         // GET: api/Publishers
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<Publisher>>> GetPublishers()
         {
             var list = await _unitOfWork.PublisherRepository.Get();

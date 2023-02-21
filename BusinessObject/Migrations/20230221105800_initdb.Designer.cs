@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObject.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230220095939_initdb")]
+    [Migration("20230221105800_initdb")]
     partial class initdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,6 +113,9 @@ namespace BusinessObject.Migrations
                     b.Property<decimal>("price")
                         .HasColumnType("money");
 
+                    b.Property<int>("pub_id")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("published_date")
                         .HasColumnType("date");
 
@@ -133,6 +136,8 @@ namespace BusinessObject.Migrations
 
                     b.HasKey("book_id");
 
+                    b.HasIndex("pub_id");
+
                     b.ToTable("Books");
 
                     b.HasData(
@@ -142,11 +147,12 @@ namespace BusinessObject.Migrations
                             advanced = "",
                             note = "",
                             price = 300000m,
-                            published_date = new DateTime(2023, 2, 20, 0, 0, 0, 0, DateTimeKind.Local),
+                            pub_id = 1,
+                            published_date = new DateTime(2023, 2, 21, 0, 0, 0, 0, DateTimeKind.Local),
                             royalty = "Copyright of Author 1",
                             title = "The life of Author 1",
                             type = "Romantic",
-                            ytd_date = new DateTime(2024, 2, 20, 0, 0, 0, 0, DateTimeKind.Local)
+                            ytd_date = new DateTime(2024, 2, 21, 0, 0, 0, 0, DateTimeKind.Local)
                         },
                         new
                         {
@@ -154,11 +160,12 @@ namespace BusinessObject.Migrations
                             advanced = "",
                             note = "",
                             price = 300000m,
-                            published_date = new DateTime(2022, 4, 26, 0, 0, 0, 0, DateTimeKind.Local),
+                            pub_id = 2,
+                            published_date = new DateTime(2022, 4, 27, 0, 0, 0, 0, DateTimeKind.Local),
                             royalty = "Copyright of Author 2",
                             title = "The adventure of Author 2",
                             type = "Adventure",
-                            ytd_date = new DateTime(2022, 12, 17, 0, 0, 0, 0, DateTimeKind.Local)
+                            ytd_date = new DateTime(2022, 12, 18, 0, 0, 0, 0, DateTimeKind.Local)
                         });
                 });
 
@@ -177,9 +184,6 @@ namespace BusinessObject.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("author_id", "book_id");
-
-                    b.HasIndex("author_id")
-                        .IsUnique();
 
                     b.HasIndex("book_id");
 
@@ -341,11 +345,22 @@ namespace BusinessObject.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BusinessObject.Book", b =>
+                {
+                    b.HasOne("BusinessObject.Publisher", "Publisher")
+                        .WithMany("Books")
+                        .HasForeignKey("pub_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Publisher");
+                });
+
             modelBuilder.Entity("BusinessObject.BookAuthor", b =>
                 {
                     b.HasOne("BusinessObject.Author", "Author")
-                        .WithOne("BookAuthor")
-                        .HasForeignKey("BusinessObject.BookAuthor", "author_id")
+                        .WithMany("BookAuthors")
+                        .HasForeignKey("author_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -363,13 +378,13 @@ namespace BusinessObject.Migrations
             modelBuilder.Entity("BusinessObject.User", b =>
                 {
                     b.HasOne("BusinessObject.Publisher", "Publisher")
-                        .WithMany("User")
+                        .WithMany("Users")
                         .HasForeignKey("pub_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BusinessObject.Role", "Role")
-                        .WithMany("User")
+                        .WithMany("Users")
                         .HasForeignKey("role_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -381,7 +396,7 @@ namespace BusinessObject.Migrations
 
             modelBuilder.Entity("BusinessObject.Author", b =>
                 {
-                    b.Navigation("BookAuthor");
+                    b.Navigation("BookAuthors");
                 });
 
             modelBuilder.Entity("BusinessObject.Book", b =>
@@ -391,12 +406,14 @@ namespace BusinessObject.Migrations
 
             modelBuilder.Entity("BusinessObject.Publisher", b =>
                 {
-                    b.Navigation("User");
+                    b.Navigation("Books");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("BusinessObject.Role", b =>
                 {
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

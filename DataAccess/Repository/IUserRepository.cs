@@ -10,5 +10,6 @@ namespace DataAccess.Repository
 {
     public interface IUserRepository : IGenericRepository<User>
     {
+        Task<User?> LoginAsync(string email,string password);
     }
 }

@@ -15,7 +15,7 @@ namespace eBookStoreWebAPI.Controllers
 {
     [Route("odata/BookAuthors")]
     [ApiController]
-    public class BookAuthorController : ODataController
+    public class BookAuthorController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -29,28 +29,29 @@ namespace eBookStoreWebAPI.Controllers
         public async Task<ActionResult<IEnumerable<BookAuthor>>> GetBookAuthors()
         {
             var result = await _unitOfWork.BookAuthorRepository.Get(expression: null, "Book", "Author");
+            //var result = await _unitOfWork.BookAuthorRepository.Get();
             return result.ToList();
         }
 
         // GET: api/BookAuthor
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<BookAuthor>>> GetBookAuthors(int id)
-        {
-            var result = await _unitOfWork.BookAuthorRepository.Get(expression: ba => ba.book_id == id);
-            return result.ToList();
-        }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<IEnumerable<BookAuthor>>> GetBookAuthors(int id)
+        //{
+        //    var result = await _unitOfWork.BookAuthorRepository.Get(expression: ba => ba.book_id == id);
+        //    return result.ToList();
+        //}
 
-        // GET: api/BookAuthor/5
-        [HttpGet("book-{book_id}/author-{author-id}")]
-        public async Task<ActionResult<BookAuthor>> GetBookAuthor(int book_id, int author_id)
-        {
-            var find = await _unitOfWork.BookAuthorRepository.GetFirst(expression: ba => ba.book_id == book_id && ba.author_id == author_id);
-            if(find == null)
-            {
-                return NotFound();
-            }
-            return find;
-        }
+        //// GET: api/BookAuthor/5
+        //[HttpGet("book-{book_id}/author-{author-id}")]
+        //public async Task<ActionResult<BookAuthor>> GetBookAuthor(int book_id, int author_id)
+        //{
+        //    var find = await _unitOfWork.BookAuthorRepository.GetFirst(expression: ba => ba.book_id == book_id && ba.author_id == author_id);
+        //    if(find == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return find;
+        //}
 
         // PUT: api/BookAuthor/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

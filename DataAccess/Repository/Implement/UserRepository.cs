@@ -15,5 +15,10 @@ namespace DataAccess.Repository.Implement
         public UserRepository(Context context, IUnitOfWork unitOfWork) : base(context)
         {
         }
+
+        public Task<User?> LoginAsync(string email, string password)
+        {
+            return GetFirst(expression: c => c.email_address == email && c.password == password, "Role");
+        }
     }
 }

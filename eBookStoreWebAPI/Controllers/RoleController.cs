@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
 using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace eBookStoreWebAPI.Controllers
 {
@@ -24,6 +25,7 @@ namespace eBookStoreWebAPI.Controllers
 
         // GET: api/Roles
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
         {
             var list = await _unitOfWork.RoleRepository.Get();

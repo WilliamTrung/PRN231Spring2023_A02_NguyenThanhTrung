@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace eBookStoreWebAPI.Controllers
 {
@@ -23,6 +24,7 @@ namespace eBookStoreWebAPI.Controllers
 
         // GET: api/Book
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
             var list = await _unitOfWork.BookRepository.Get();

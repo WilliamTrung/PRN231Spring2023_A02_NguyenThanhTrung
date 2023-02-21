@@ -24,11 +24,11 @@ namespace BusinessObject
 
         [ForeignKey("Role")]
         public int role_id { get; set; }
-        public Role? Role { get; set; }
+        public virtual Role? Role { get; set; }
 
         [ForeignKey("Publisher")]
         public int pub_id { get; set; }
-        public Publisher? Publisher { get; set; }
+        public virtual Publisher? Publisher { get; set; }
         [Column(TypeName ="date")]
 
         public DateTime hire_date;

@@ -30,26 +30,6 @@ namespace BusinessObject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Books",
-                columns: table => new
-                {
-                    book_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    price = table.Column<decimal>(type: "money", nullable: false),
-                    advanced = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    royalty = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ytd_date = table.Column<DateTime>(type: "date", nullable: false),
-                    note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    published_date = table.Column<DateTime>(type: "date", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Books", x => x.book_id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Publishers",
                 columns: table => new
                 {
@@ -79,28 +59,29 @@ namespace BusinessObject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookAuthors",
+                name: "Books",
                 columns: table => new
                 {
-                    author_id = table.Column<int>(type: "int", nullable: false),
-                    book_id = table.Column<int>(type: "int", nullable: false),
-                    author_order = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    royality_percentage = table.Column<int>(type: "int", nullable: false)
+                    book_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    pub_id = table.Column<int>(type: "int", nullable: false),
+                    title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    price = table.Column<decimal>(type: "money", nullable: false),
+                    advanced = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    royalty = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ytd_date = table.Column<DateTime>(type: "date", nullable: false),
+                    note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    published_date = table.Column<DateTime>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookAuthors", x => new { x.author_id, x.book_id });
+                    table.PrimaryKey("PK_Books", x => x.book_id);
                     table.ForeignKey(
-                        name: "FK_BookAuthors_Authors_author_id",
-                        column: x => x.author_id,
-                        principalTable: "Authors",
-                        principalColumn: "author_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BookAuthors_Books_book_id",
-                        column: x => x.book_id,
-                        principalTable: "Books",
-                        principalColumn: "book_id",
+                        name: "FK_Books_Publishers_pub_id",
+                        column: x => x.pub_id,
+                        principalTable: "Publishers",
+                        principalColumn: "pub_id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -135,6 +116,32 @@ namespace BusinessObject.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "BookAuthors",
+                columns: table => new
+                {
+                    author_id = table.Column<int>(type: "int", nullable: false),
+                    book_id = table.Column<int>(type: "int", nullable: false),
+                    author_order = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    royality_percentage = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookAuthors", x => new { x.author_id, x.book_id });
+                    table.ForeignKey(
+                        name: "FK_BookAuthors_Authors_author_id",
+                        column: x => x.author_id,
+                        principalTable: "Authors",
+                        principalColumn: "author_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BookAuthors_Books_book_id",
+                        column: x => x.book_id,
+                        principalTable: "Books",
+                        principalColumn: "book_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Authors",
                 columns: new[] { "author_id", "address", "city", "email_address", "first_name", "last_name", "phone", "state", "zip" },
@@ -142,15 +149,6 @@ namespace BusinessObject.Migrations
                 {
                     { 1, "237 Lê Văn Việt", "Hồ Chí Minh", "thanhtrung@gmai.com", "Thanh Trung", "Nguyen", "0908456789", "Hồ Chí Minh", "700000" },
                     { 2, "123 đường 1", "Ha Noi", "anhkhoa@gmail.com", "Anh Khoa", "Tran", "0908123456", "Ha Noi", "123456" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Books",
-                columns: new[] { "book_id", "advanced", "note", "price", "published_date", "royalty", "title", "type", "ytd_date" },
-                values: new object[,]
-                {
-                    { 1, "", "", 300000m, new DateTime(2023, 2, 20, 0, 0, 0, 0, DateTimeKind.Local), "Copyright of Author 1", "The life of Author 1", "Romantic", new DateTime(2024, 2, 20, 0, 0, 0, 0, DateTimeKind.Local) },
-                    { 2, "", "", 300000m, new DateTime(2022, 4, 26, 0, 0, 0, 0, DateTimeKind.Local), "Copyright of Author 2", "The adventure of Author 2", "Adventure", new DateTime(2022, 12, 17, 0, 0, 0, 0, DateTimeKind.Local) }
                 });
 
             migrationBuilder.InsertData(
@@ -172,12 +170,12 @@ namespace BusinessObject.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "BookAuthors",
-                columns: new[] { "author_id", "book_id", "author_order", "royality_percentage" },
+                table: "Books",
+                columns: new[] { "book_id", "advanced", "note", "price", "pub_id", "published_date", "royalty", "title", "type", "ytd_date" },
                 values: new object[,]
                 {
-                    { 1, 1, "", 60 },
-                    { 2, 2, "", 25 }
+                    { 1, "", "", 300000m, 1, new DateTime(2023, 2, 21, 0, 0, 0, 0, DateTimeKind.Local), "Copyright of Author 1", "The life of Author 1", "Romantic", new DateTime(2024, 2, 21, 0, 0, 0, 0, DateTimeKind.Local) },
+                    { 2, "", "", 300000m, 2, new DateTime(2022, 4, 27, 0, 0, 0, 0, DateTimeKind.Local), "Copyright of Author 2", "The adventure of Author 2", "Adventure", new DateTime(2022, 12, 18, 0, 0, 0, 0, DateTimeKind.Local) }
                 });
 
             migrationBuilder.InsertData(
@@ -189,16 +187,25 @@ namespace BusinessObject.Migrations
                     { 2, "member2@gmail.com", "Lien", "Huong", "2", 2, 2, "Member2SourceLink.com" }
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_BookAuthors_author_id",
+            migrationBuilder.InsertData(
                 table: "BookAuthors",
-                column: "author_id",
-                unique: true);
+                columns: new[] { "author_id", "book_id", "author_order", "royality_percentage" },
+                values: new object[] { 1, 1, "", 60 });
+
+            migrationBuilder.InsertData(
+                table: "BookAuthors",
+                columns: new[] { "author_id", "book_id", "author_order", "royality_percentage" },
+                values: new object[] { 2, 2, "", 25 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookAuthors_book_id",
                 table: "BookAuthors",
                 column: "book_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Books_pub_id",
+                table: "Books",
+                column: "pub_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_pub_id",
@@ -226,10 +233,10 @@ namespace BusinessObject.Migrations
                 name: "Books");
 
             migrationBuilder.DropTable(
-                name: "Publishers");
+                name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Publishers");
         }
     }
 }

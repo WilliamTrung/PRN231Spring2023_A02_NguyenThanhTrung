@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
 using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace eBookStoreWebAPI.Controllers
 {
     [Route("odata/Users")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : ODataController
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -26,9 +28,10 @@ namespace eBookStoreWebAPI.Controllers
 
         // GET: api/User
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var list = await _unitOfWork.UserRepository.Get();
+            var list = await _unitOfWork.UserRepository.Get(expression: null, "Role", "Publisher");
             return list.ToList();
         }
 
