@@ -20,24 +20,24 @@ namespace eBookStore.Pages.Administrator.Publishers
         }
 
         [BindProperty]
-      public Publisher Publisher { get; set; }
+        public Publisher Publisher { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Publishers == null)
+            if (id == null || _context.Books == null)
             {
                 return NotFound();
             }
 
-            var publisher = await _context.Publishers.FirstOrDefaultAsync(m => m.pub_id == id);
+            var publisher = await _context.Books.FirstOrDefaultAsync(m => m.Book_id == id);
 
             if (publisher == null)
             {
                 return NotFound();
             }
-            else 
+            else
             {
-                Publisher = publisher;
+                publisher = publisher;
             }
             return Page();
         }
@@ -48,12 +48,12 @@ namespace eBookStore.Pages.Administrator.Publishers
             {
                 return NotFound();
             }
-            var publisher = await _context.Publishers.FindAsync(id);
+            var book = await _context.Books.FindAsync(id);
 
-            if (publisher != null)
+            if (book != null)
             {
-                Publisher = publisher;
-                _context.Publishers.Remove(Publisher);
+                publisher = publisher;
+                _context.Books.Remove(Publisher);
                 await _context.SaveChangesAsync();
             }
 

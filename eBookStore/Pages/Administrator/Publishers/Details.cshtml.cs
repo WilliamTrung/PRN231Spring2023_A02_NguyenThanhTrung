@@ -19,7 +19,7 @@ namespace eBookStore.Pages.Administrator.Publishers
             _context = context;
         }
 
-      public Publisher Publisher { get; set; }
+        public Publisher Publisher { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,14 +28,14 @@ namespace eBookStore.Pages.Administrator.Publishers
                 return NotFound();
             }
 
-            var publisher = await _context.Publishers.FirstOrDefaultAsync(m => m.pub_id == id);
+            var publisher = await _context.Publishers.FirstOrDefaultAsync(m => m.Publisher_id == id);
             if (publisher == null)
             {
                 return NotFound();
             }
-            else 
+            else
             {
-                Publisher = publisher;
+                publisher = publisher;
             }
             return Page();
         }

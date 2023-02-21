@@ -53,7 +53,7 @@ namespace eBookStore.Pages.Administrator.Books
             if (book != null)
             {
                 book = book;
-                _context.Books.Remove(Author);
+                _context.Books.Remove(Book);
                 await _context.SaveChangesAsync();
             }
 

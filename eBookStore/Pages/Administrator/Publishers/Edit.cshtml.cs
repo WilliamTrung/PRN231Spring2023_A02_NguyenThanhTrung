@@ -30,12 +30,12 @@ namespace eBookStore.Pages.Administrator.Publishers
                 return NotFound();
             }
 
-            var publisher =  await _context.Publishers.FirstOrDefaultAsync(m => m.pub_id == id);
+            var publisher = await _context.Publishers.FirstOrDefaultAsync(m => m.Publisher_id == id);
             if (publisher == null)
             {
                 return NotFound();
             }
-            Publisher = publisher;
+            publisher = publisher;
             return Page();
         }
 
@@ -56,7 +56,7 @@ namespace eBookStore.Pages.Administrator.Publishers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PublisherExists(Publisher.pub_id))
+                if (!PublisherExists(Publisher.Publisher_id))
                 {
                     return NotFound();
                 }
@@ -71,7 +71,7 @@ namespace eBookStore.Pages.Administrator.Publishers
 
         private bool PublisherExists(int id)
         {
-          return _context.Publishers.Any(e => e.pub_id == id);
+            return _context.Publishers.Any(e => e.Publisher_id == id);
         }
     }
 }
