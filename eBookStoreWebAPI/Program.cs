@@ -58,7 +58,7 @@ app.MapControllers();
 app.Use((context, next) =>
 {
     var endpoint = context.GetEndpoint();
-    if (endpoint != null)
+    if (endpoint == null)
     {
         return next(context);
     }

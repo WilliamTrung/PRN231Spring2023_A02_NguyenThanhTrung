@@ -13,5 +13,6 @@ namespace DataAccess.Generic
         public Task Update(TEntity entity);
         public Task Delete(TEntity entity);
         public Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>>? expression = null, params string[] includeProperties);
+        public Task<TEntity?> GetFirst(Expression<Func<TEntity, bool>>? expression = null, params string[] includeProperties);
     }
 }

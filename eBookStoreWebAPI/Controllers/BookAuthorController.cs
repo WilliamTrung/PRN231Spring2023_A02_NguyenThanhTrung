@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using BusinessObject;
 using BusinessObject.DBContext;
 using DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace eBookStoreWebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("odata/BookAuthors")]
     [ApiController]
-    public class BookAuthorController : ControllerBase
+    public class BookAuthorController : ODataController
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -22,56 +24,52 @@ namespace eBookStoreWebAPI.Controllers
             _unitOfWork= unitOfWork;
         }
 
-        // GET: api/BookAuthor
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<BookAuthor>>> GetBookAuthors()
         {
             var result = await _unitOfWork.BookAuthorRepository.Get();
             return result.ToList();
         }
 
-        // GET: api/BookAuthor/5
+        // GET: api/BookAuthor
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookAuthor>> GetBookAuthor(int id)
+        public async Task<ActionResult<IEnumerable<BookAuthor>>> GetBookAuthors(int id)
         {
-            //var bookAuthor = await _context.BookAuthors.FindAsync(id);
+            var result = await _unitOfWork.BookAuthorRepository.Get(expression: ba => ba.book_id == id);
+            return result.ToList();
+        }
 
-            //if (bookAuthor == null)
-            //{
-            //    return NotFound();
-            //}
-
-            return null;
+        // GET: api/BookAuthor/5
+        [HttpGet("book-{book_id}/author-{author-id}")]
+        public async Task<ActionResult<BookAuthor>> GetBookAuthor(int book_id, int author_id)
+        {
+            var find = await _unitOfWork.BookAuthorRepository.GetFirst(expression: ba => ba.book_id == book_id && ba.author_id == author_id);
+            if(find == null)
+            {
+                return NotFound();
+            }
+            return find;
         }
 
         // PUT: api/BookAuthor/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBookAuthor(int id, BookAuthor bookAuthor)
+        public async Task<IActionResult> PutBookAuthor(int book_id, int author_id, BookAuthor bookAuthor)
         {
-            //if (id != bookAuthor.author_id)
-            //{
-            //    return BadRequest();
-            //}
+            if (book_id != bookAuthor.book_id && author_id != bookAuthor.author_id)
+            {
+                return BadRequest();
+            }
 
-            //_context.Entry(bookAuthor).State = EntityState.Modified;
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!BookAuthorExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
+            var find = await _unitOfWork.BookAuthorRepository.GetFirst(expression: e => e.book_id == bookAuthor.book_id && e.author_id == bookAuthor.author_id);
+            if(find == null)
+            {
+                return NotFound();
+            }
+            find.author_order = bookAuthor.author_order;
+            find.royality_percentage= bookAuthor.royality_percentage;
+            await _unitOfWork.BookAuthorRepository.Update(find);
             return NoContent();
         }
 
@@ -80,38 +78,20 @@ namespace eBookStoreWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<BookAuthor>> PostBookAuthor(BookAuthor bookAuthor)
         {
-            //_context.BookAuthors.Add(bookAuthor);
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    if (BookAuthorExists(bookAuthor.author_id))
-            //    {
-            //        return Conflict();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
+            await _unitOfWork.BookAuthorRepository.Add(bookAuthor);
             return CreatedAtAction("GetBookAuthor", new { id = bookAuthor.author_id }, bookAuthor);
         }
 
         // DELETE: api/BookAuthor/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBookAuthor(int id)
+        [HttpDelete("book-{book_id}/author-{author-id}")]
+        public async Task<IActionResult> DeleteBookAuthor(int book_id, int author_id)
         {
-            //var bookAuthor = await _context.BookAuthors.FindAsync(id);
-            //if (bookAuthor == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //_context.BookAuthors.Remove(bookAuthor);
-            //await _context.SaveChangesAsync();
+            var find = await _unitOfWork.BookAuthorRepository.GetFirst(expression: e => e.book_id == book_id && e.author_id == author_id);
+            if (find == null)
+            {
+                return NotFound();
+            }
+            await _unitOfWork.BookAuthorRepository.Delete(find);
 
             return NoContent();
         }

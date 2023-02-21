@@ -49,5 +49,12 @@ namespace DataAccess.Generic
             _entities.Update(entity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<TEntity?> GetFirst(Expression<Func<TEntity, bool>>? expression = null, params string[] includeProperties)
+        {
+            var find = await Get(expression, includeProperties);
+            var found = find.FirstOrDefault();
+            return found;
+        }
     }
 }
