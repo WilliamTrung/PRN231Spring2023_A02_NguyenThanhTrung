@@ -27,7 +27,7 @@ namespace eBookStoreWebAPI.Controllers
         [EnableQuery]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
-            var list = await _unitOfWork.BookRepository.Get();
+            var list = await _unitOfWork.BookRepository.Get(expression: null, "Publisher");
             return list.ToList();
         }
 
