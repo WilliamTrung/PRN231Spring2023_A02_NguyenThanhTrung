@@ -20,7 +20,7 @@ namespace eBookStore.Pages.Administrator.Books
         }
 
         [BindProperty]
-      public Book Book { get; set; }
+        public Book Book { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,15 +29,15 @@ namespace eBookStore.Pages.Administrator.Books
                 return NotFound();
             }
 
-            var book = await _context.Books.FirstOrDefaultAsync(m => m.book_id == id);
+            var book = await _context.Books.FirstOrDefaultAsync(m => m.Book_id == id);
 
             if (book == null)
             {
                 return NotFound();
             }
-            else 
+            else
             {
-                Book = book;
+                book = book;
             }
             return Page();
         }
@@ -52,12 +52,11 @@ namespace eBookStore.Pages.Administrator.Books
 
             if (book != null)
             {
-                Book = book;
-                _context.Books.Remove(Book);
+                book = book;
+                _context.Books.Remove(Author);
                 await _context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");
         }
     }
-}

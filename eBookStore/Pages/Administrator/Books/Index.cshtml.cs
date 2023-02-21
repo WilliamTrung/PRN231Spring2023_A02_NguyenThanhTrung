@@ -19,7 +19,7 @@ namespace eBookStore.Pages.Administrator.Books
             _context = context;
         }
 
-        public IList<Book> Book { get;set; } = default!;
+        public IList<Book> Book { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
