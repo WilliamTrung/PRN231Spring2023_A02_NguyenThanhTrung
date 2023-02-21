@@ -9,7 +9,7 @@ builder.Services.AddRazorPages();
 builder.Services
     .AddHttpClient("BaseClient", client =>
     {
-        client.BaseAddress = new Uri(builder.Configuration.GetSection("ApiURI").Value);
+        client.BaseAddress = new Uri(builder.Configuration.GetSection("BaseAddress").Value);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     });
 builder.Services.AddSession();
@@ -26,7 +26,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthorization();

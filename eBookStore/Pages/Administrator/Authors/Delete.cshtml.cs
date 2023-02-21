@@ -9,6 +9,7 @@ using BusinessObject;
 using BusinessObject.DBContext;
 using ClientRepository.Extension;
 using System.Diagnostics.Metrics;
+using Newtonsoft.Json.Linq;
 
 namespace eBookStore.Pages.Administrator.Authors
 {
@@ -32,11 +33,12 @@ namespace eBookStore.Pages.Administrator.Authors
             {
                 return NotFound();
             }
-            client.AddTokenHeader(HttpContext.Session.GetString("token"));
-            var response = await client.GetAsync("Authors?$filter = author_id eq " + ((int)id).ToString());
+            client.AddTokenHeader(HttpContext.Session.GetString("token"));            
+            var response = await client.GetAsync("Authors?$filter= author_id eq " + ((int)id).ToString());
             if (response != null && response.IsSuccessStatusCode && response.Content != null)
             {
-                var author = await response.Content.ReadFromJsonAsync<Author>();
+                var authors = await response.Content.ReadFromJsonAsync<List<Author>>();
+                var author = authors.FirstOrDefault();
                 if (author != null)
                 {
                     Author = author;

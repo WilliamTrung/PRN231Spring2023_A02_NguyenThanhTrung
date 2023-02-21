@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ClientRepository.Extension;
 using ClientRepository.Models;
+using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace eBookStore.Pages.Administrator.Authors
 {
@@ -30,16 +32,12 @@ namespace eBookStore.Pages.Administrator.Authors
                 client.AddTokenHeader(HttpContext.Session.GetString("token"));
                 var response = await client.GetAsync(requestUri: "Authors");
                 if (response.IsSuccessStatusCode)
-                {
+                {                    
                     var authors = await response.Content.ReadFromJsonAsync<List<Author>>();
-                    //if (content != null)
-                    //{
-                    //var products = JsonSerializer.Deserialize<List<Product>>(content, jsonOption);
                     if (authors != null)
                     {
                         Author = authors;
                     }
-                    //}
                 }
                 else
                 {

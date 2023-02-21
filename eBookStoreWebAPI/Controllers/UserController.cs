@@ -15,7 +15,7 @@ namespace eBookStoreWebAPI.Controllers
 {
     [Route("odata/Users")]
     [ApiController]
-    public class UserController : ODataController
+    public class UserController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
 

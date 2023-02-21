@@ -15,7 +15,7 @@ namespace eBookStoreWebAPI.Controllers
 {
     [Route("odata/Authors")]
     [ApiController]
-    public class AuthorController : ODataController
+    public class AuthorController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -70,8 +70,8 @@ namespace eBookStoreWebAPI.Controllers
 
         // POST: api/Author
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor(Author author)
+        [HttpPost]        
+        public async Task<ActionResult<Author>> PostAuthor([FromBody]Author author)
         {
             await _unitOfWork.AuthorRepository.Add(author);            
             return CreatedAtAction("GetAuthor", new { id = author.author_id }, author);
