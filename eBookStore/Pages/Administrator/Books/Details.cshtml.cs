@@ -19,7 +19,7 @@ namespace eBookStore.Pages.Administrator.Books
             _context = context;
         }
 
-      public Book Book { get; set; }
+        public Book Book { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,12 +28,12 @@ namespace eBookStore.Pages.Administrator.Books
                 return NotFound();
             }
 
-            var book = await _context.Books.FirstOrDefaultAsync(m => m.book_id == id);
+            var book = await _context.Books.FirstOrDefaultAsync(m => m.Book_id == id);
             if (book == null)
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 Book = book;
             }

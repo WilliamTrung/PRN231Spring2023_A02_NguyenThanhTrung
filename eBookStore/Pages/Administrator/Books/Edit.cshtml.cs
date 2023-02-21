@@ -30,7 +30,7 @@ namespace eBookStore.Pages.Administrator.Books
                 return NotFound();
             }
 
-            var book =  await _context.Books.FirstOrDefaultAsync(m => m.book_id == id);
+            var book = await _context.Books.FirstOrDefaultAsync(m => m.Book_id == id);
             if (book == null)
             {
                 return NotFound();
@@ -57,7 +57,7 @@ namespace eBookStore.Pages.Administrator.Books
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(Book.book_id))
+                if (!BookExists(Book.book))
                 {
                     return NotFound();
                 }
@@ -72,7 +72,7 @@ namespace eBookStore.Pages.Administrator.Books
 
         private bool BookExists(int id)
         {
-          return _context.Books.Any(e => e.book_id == id);
+            return _context.Books.Any(e => e.Book_id == id);
         }
     }
 }
